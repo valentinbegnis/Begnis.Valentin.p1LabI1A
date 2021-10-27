@@ -15,8 +15,10 @@
 #include "color.h"
 #include "servicio.h"
 #include "misFunciones.h"
+#include "dataWarehouse.h"
+#include "cliente.h"
 
-#define TAM 5
+#define TAM 10
 #define TAM_T 4
 #define TAM_C 5
 #define TAM_S 4
@@ -26,6 +28,7 @@ int main(void) {
     char seguir = 's';
     int nextIdBicicleta = 2000;
     int nextIdTrabajo = 3000;
+    int flag = 1;
 
     eBicicleta lista[TAM];
     eTipo tipos[TAM_T] = {
@@ -49,10 +52,32 @@ int main(void) {
     };
     eTrabajo trabajos[TAM];
 
+    /*
+    eCliente clientes[TAM] = {
+    		{10, "Juan", 'm'},
+    		{11, "Maria", 'f'},
+    		{12, "Ana", 'f'},
+    		{13, "Lucio", 'm'},
+    		{14, "Martin", 'm'},
+    		{15, "Jacinta", 'f'},
+    		{16, "Ramon", 'm'},
+    		{17, "Carlos", 'm'},
+    		{18, "Claudia", 'f'},
+    		{19, "Juano", 'm'},
+    };
+    */
+
     if(!inicializarBicicleta(lista, TAM))
     {
     	printf("Ocurrio un problema al inicializar las bicicletas\n");
     }
+    if(!inicializarTrabajo(trabajos, TAM))
+    {
+    	printf("Ocurrio un problema al inicializar los trabajos\n");
+    }
+
+    //hardcodearBicicletas(lista, TAM, 9, &nextIdBicicleta);
+    //hardcodearTrabajos(trabajos, TAM, 9, &nextIdTrabajo);
 
     do
     {
@@ -61,7 +86,8 @@ int main(void) {
             case 1:
                 if(altaBicicleta(lista, TAM, tipos, TAM_T, colores, TAM_C, &nextIdBicicleta))
                 {
-                	printf("Alta exitosa\n");
+                	flag = 0;
+                	printf("\nAlta exitosa\n");
                 }
                 else
                 {
@@ -69,34 +95,55 @@ int main(void) {
                 }
                 break;
             case 2:
-                if(modificarBicicleta(lista, TAM, tipos, TAM_T, colores, TAM_C))
-                {
-                	printf("Modificacionexitosa\n");
-                }
-                else
-                {
-                	printf("Hubo un problema al modificar\n");
-                }
+            	if(!flag)
+            	{
+            		if(modificarBicicleta(lista, TAM, tipos, TAM_T, colores, TAM_C))
+					{
+					printf("\nModificacion exitosa\n");
+					}
+					else
+					{
+					printf("Hubo un problema al modificar\n");
+					}
+            	}
+            	else
+            	{
+					printf("Debe dar de alta por lo menos una bicicleta primero\n");
+            	}
             	break;
 			case 3:
-                if(bajaBicicleta(lista, TAM, tipos, TAM_T, colores, TAM_C))
-                {
-                	printf("Baja exitosa\n");
-                }
+				if(!flag)
+				{
+	                if(bajaBicicleta(lista, TAM, tipos, TAM_T, colores, TAM_C))
+	                {
+	                	printf("\nBaja exitosa\n");
+	                }
+	                else
+	                {
+	                	printf("Hubo un problema al dar de baja\n");
+	                }
+				}
                 else
                 {
-                	printf("Hubo un problema al dar de baja\n");
+					printf("Debe dar de alta por lo menos una bicicleta primero\n");
                 }
 				break;
 			case 4:
-				if(!ordenarBicicleta(lista, TAM))
+				if(!flag)
 				{
-                	printf("Hubo un problema al ordenar\n");
+					if(!ordenarBicicleta(lista, TAM, tipos, TAM_T))
+					{
+						printf("Hubo un problema al ordenar\n");
+					}
+					if(!mostrarBicicletas(lista, TAM, tipos, TAM_T, colores, TAM_C))
+					{
+						printf("Hubo un problema al mostrar\n");
+					}
 				}
-                if(!mostrarBicicletas(lista, TAM, tipos, TAM_T, colores, TAM_C))
-                {
-                	printf("Hubo un problema al mostrar\n");
-                }
+				else
+				{
+					printf("Debe dar de alta por lo menos una bicicleta primero\n");
+				}
 				break;
 			case 5:
 	            if(!mostrarTipos(tipos, TAM_T))
@@ -117,13 +164,20 @@ int main(void) {
 					}
 	            break;
 			case 8:
-			   if(altaTrabajos(trabajos, lista, TAM, tipos, TAM_T, colores, TAM_C, servicios, TAM_S, &nextIdTrabajo))
+				if(!flag)
 				{
-					printf("Alta exitosa\n");
+				   if(altaTrabajos(trabajos, lista, TAM, tipos, TAM_T, colores, TAM_C, servicios, TAM_S, &nextIdTrabajo))
+					{
+						printf("\nAlta exitosa\n");
+					}
+					else
+					{
+						printf("Hubo un problema al dar de alta\n");
+					}
 				}
 				else
 				{
-					printf("Hubo un problema al dar de alta\n");
+					printf("Debe dar de alta por lo menos una bicicleta primero\n");
 				}
 				break;
 			case 9:
@@ -132,9 +186,24 @@ int main(void) {
 						printf("Hubo un problema al mostrar\n");
 					}
 	            break;
-            case 10:
-				  seguir = 'n';
-				  break;
+	        //Informes
+			case 10:
+				if(!flag)
+				{
+					if(!informes(lista, TAM, tipos, TAM_T, colores, TAM_C, servicios, TAM_S, trabajos))
+					{
+						printf("Hubo un problema al mostrar los informes\n");
+					}
+				}
+				else
+				{
+					printf("Debe dar de alta por lo menos una bicicleta primero\n");
+				}
+				break;
+			case 11:
+				printf("Saliste\n");
+				seguir = 'n';
+				break;
             default:
                  printf("Opcion invalida\n");
         }

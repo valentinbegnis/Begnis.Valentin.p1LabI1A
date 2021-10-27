@@ -3,6 +3,7 @@
 #include <stdio_ext.h>
 #include "trabajo.h"
 #include "bicicleta.h"
+#include "validaciones.h"
 
 int inicializarTrabajo(eTrabajo trabajos[], int tam)
 {
@@ -39,16 +40,14 @@ int altaTrabajos(eTrabajo trabajos[], eBicicleta lista[], int tam, eTipo tipos[]
 {
 	int todoOk = 0;
 	int indice;
-	int stringValido;
-	int retornoBicicleta;
-	int retornoServicio;
+	int retornoBicicleta, retornoServicio, retornoFecha;
 	eTrabajo auxTrabajo;
 
 	if(trabajos != NULL && lista != NULL && tam > 0 && tipos != NULL && tamT > 0 && colores != NULL && tamC > 0 && servicios != NULL && tamS > 0 && pId != NULL)
 	{
 		system("clear");
-	    printf("            *** Alta Trabajo ***              \n");
-	    printf("---------------------------------------------\n");
+	    printf("                   *** Alta Trabajo ***\n");
+	    printf("------------------------------------------------------------\n");
 
 		indice = buscarLibreTrabajo(trabajos, tam);
 		if(indice == -1)
@@ -60,33 +59,34 @@ int altaTrabajos(eTrabajo trabajos[], eBicicleta lista[], int tam, eTipo tipos[]
 			auxTrabajo.id = *pId;
 			(*pId)++;
 
-
-			printf("Ingrese id de la bicicleta: ");
+			mostrarBicicletas(lista, tam, tipos, tamT, colores, tamC);
+			printf("\nIngrese id de la bicicleta: ");
 			retornoBicicleta = scanf("%d", &auxTrabajo.idBicicleta);
-			//validarEntero(retornoTipo, &auxBicicleta.idTipo);
+			validarEntero(retornoBicicleta, &auxTrabajo.idBicicleta);
 
 			while(!validarIdBicicleta(lista, tam, auxTrabajo.idBicicleta))
 				{
-					mostrarBicicletas(lista, tam, tipos, tamT, colores, tamC);
-					printf("Error. Ingrese un id de tipo valido: ");
+					printf("Error. Ingrese un id valido: ");
 					retornoBicicleta = scanf("%d", &auxTrabajo.idBicicleta);
+					validarEntero(retornoBicicleta, &auxTrabajo.idBicicleta);
 				}
 
 			mostrarServicios(servicios, tamS);
-			printf("Ingrese id del servicio: ");
+			printf("\nIngrese id del servicio: ");
 			retornoServicio = scanf("%d", &auxTrabajo.idServicio);
-			//validarEntero(retornoColor, &auxBicicleta.idColor);
+			validarEntero(retornoServicio, &auxTrabajo.idServicio);
 
 			while(!validarIdServicio(servicios, tamS, auxTrabajo.idServicio))
 				{
-					mostrarServicios(servicios, tamS);
-					printf("Error. Ingrese un id de servicio valido: ");
+					printf("Error. Ingrese un id valido: ");
 					retornoServicio = scanf("%d", &auxTrabajo.idServicio);
+					validarEntero(retornoServicio, &auxTrabajo.idServicio);
 				}
 
-			printf("Ingrese fecha: ");
+			printf("\nIngrese fecha: ");
 			__fpurge(stdin);
-			scanf("%d/%d/%d", &auxTrabajo.fecha.dia, &auxTrabajo.fecha.mes, &auxTrabajo.fecha.anio);
+			retornoFecha = scanf("%d/%d/%d", &auxTrabajo.fecha.dia, &auxTrabajo.fecha.mes, &auxTrabajo.fecha.anio);
+			validarFecha(retornoFecha, &auxTrabajo.fecha.dia, &auxTrabajo.fecha.mes, &auxTrabajo.fecha.anio);
 
 			auxTrabajo.isEmpty = 0;
 
@@ -101,14 +101,20 @@ void mostrarTrabajo(eTrabajo unTrabajo, eBicicleta lista[], int tam,  eServicio 
 {
 	char descBicicleta[20];
 	char descServicio[20];
+	int indiceBicicleta, indiceServicio;
+
+	indiceBicicleta = buscarBicicletaId(lista, tam, unTrabajo.idBicicleta);
+	indiceServicio = buscarServicioId(servicios, tamS, unTrabajo.idServicio);
 
 	cargarDescripcionBicicleta(lista, tam, unTrabajo.idBicicleta, descBicicleta);
 	cargarDescripcionServicio(servicios, tamS, unTrabajo.idServicio, descServicio);
 
-	printf("  %d    %10s   %10s   %d/%d/%d\n",
+	printf("      %d      %d     %10s       %8s      %3d   %d/%d/%d\n",
 			unTrabajo.id,
+			lista[indiceBicicleta].id,
 			descBicicleta,
 			descServicio,
+			servicios[indiceServicio].precio,
 			unTrabajo.fecha.dia,
 			unTrabajo.fecha.mes,
 			unTrabajo.fecha.anio
@@ -122,12 +128,12 @@ int mostrarTrabajos(eTrabajo trabajos[], int tam, eBicicleta lista[],  eServicio
 	if(trabajos != NULL && tam > 0 && lista != NULL && servicios != NULL && tamS > 0)
 	{
 		system("clear");
-	    printf("       *** Listado de Trabajos ***      \n");
-		printf("   Id   Bicicleta   Servicio   Fecha\n");
-	    printf("---------------------------------------\n");
+	    printf("                     *** Listado de Trabajos ***                      \n");
+		printf("   Id Trabajo    Id        Bicicleta      Servicio    Precio    Fecha\n");
+	    printf("------------------------------------------------------------------------\n");
 		for(int i = 0; i < tam; i++)
 		{
-			if(lista[i].isEmpty == 0)
+			if(trabajos[i].isEmpty == 0)
 			{
 				mostrarTrabajo(trabajos[i], lista, tam, servicios, tamS);
 				flag = 0;

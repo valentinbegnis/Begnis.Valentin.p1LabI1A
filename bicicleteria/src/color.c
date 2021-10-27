@@ -4,15 +4,13 @@
 #include <string.h>
 #include "color.h"
 
-void mostrarColor(eColor unColor, int tamC)
+void mostrarColor(eColor unColor)
 {
-	if(tamC > 0)
-	{
-		printf("  %d   %10s\n",
+	printf("  %d   %10s\n",
 				unColor.id,
 				unColor.nombreColor
 				);
-	}
+
 }
 
 int mostrarColores(eColor colores[], int tamC)
@@ -27,7 +25,7 @@ int mostrarColores(eColor colores[], int tamC)
 	    printf("--------------------------\n");
 		for(int i = 0; i < tamC; i++)
 		{
-			mostrarColor(colores[i], tamC);
+			mostrarColor(colores[i]);
 			flag = 0;
 		}
 		if(flag)

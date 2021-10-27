@@ -1,17 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdio_ext.h>
+#include <string.h>
 #include "tipo.h"
 
-void mostrarTipo(eTipo unTipo, int tamT)
+void mostrarTipo(eTipo unTipo)
 {
-	if(tamT > 0)
-	{
-		printf("  %d   %10s\n",
-				unTipo.id,
-				unTipo.descripcion
-				);
-	}
+	printf("  %d   %10s\n",
+			unTipo.id,
+			unTipo.descripcion
+			);
 }
 
 int mostrarTipos(eTipo tipos[], int tamT)
@@ -26,7 +24,7 @@ int mostrarTipos(eTipo tipos[], int tamT)
 	    printf("----------------------------\n");
 		for(int i = 0; i < tamT; i++)
 		{
-			mostrarTipo(tipos[i], tamT);
+			mostrarTipo(tipos[i]);
 			flag = 0;
 		}
 		if(flag)
